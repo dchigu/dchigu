@@ -11,7 +11,7 @@
             },
             "Packager": "com.ibm.perfectstorm.cloudoe.packager.LiveEditDeploymentPackager"
         },
-        "Name": "node-helloworld-dchigu-1332",
+        "Name": "dchigu-dchigu-1517",
         "Target": {
             "Org": "dchigurupall2016",
             "Space": "dev",
