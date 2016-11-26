@@ -7,7 +7,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get("/hello", function (request, response) {
     response.writeHead(200, {"Content-Type": "text/plain"})
-    response.end("Hello World!\n");
+    response.end(maincloud.html);
 });
 
 app.listen(port);
