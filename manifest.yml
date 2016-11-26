@@ -1,0 +1,5 @@
+---
+applications:
+- name: node-helloworld-dchigu-1332
+  host: node-helloworld-dchigu-1332
+  memory: 128M
