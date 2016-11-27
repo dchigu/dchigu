@@ -75,6 +75,25 @@ app.route('/login')
 		res.send('processing the login form!');
 	});
 
+//upload file
+app.route("/upload")
+    .post(function (req, res, next) {
+
+        var fstream;
+        req.pipe(req.busboy);
+        req.busboy.on("file", /* @callback */ function (fieldname, file, filename) {
+            console.log("Uploading: " + filename);
+
+            //Path where image will be uploaded
+            fstream = fs.createWriteStream(__dirname + "/img/" + filename);
+            file.pipe(fstream);
+            fstream.on("close", function () {    
+                console.log("Upload Finished of " + filename);              
+                res.redirect("back");           //where to go next
+            });
+        });
+    });
+
 // START THE SERVER
 // ==============================================
 app.listen(port);
