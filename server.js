@@ -1,98 +1,99 @@
-// server.js
+var express = require('express');    //Express Web Server 
+var busboy = require('connect-busboy'); //middleware for form/file upload
+var path = require('path');     //used for file path
+var fs = require('fs-extra');       //File System - for file manipulation
 
-// BASE SETUP
-// ==============================================
+var app = express();
+app.use(busboy());
+app.use(express.static(path.join(__dirname, 'public')));
 
-var express = require('express');
-var app     = express();
-var port    = 	process.env.PORT || 8080;
-
-// ROUTES
-// ==============================================
-
-// sample route with a route the way we're used to seeing it
-app.get('/sample', function(req, res) {
-	res.send('this is a sample!');	
-});
-
-// we'll create our routes here
-
-// get an instance of router
-var router = express.Router();
-
-// route middleware that will happen on every request
-router.use(function(req, res, next) {
-
-	// log each request to the console
-	console.log(req.method, req.url);
-
-	// continue doing what we were doing and go to the route
-	next();	
-});
-
-// home page route (http://localhost:8080)
-router.get('/', function(req, res) {
-	res.send('im the home page!');	
-});
-
-// about page route (http://localhost:8080/about)
-router.get('/about', function(req, res) {
-	res.send('im the about page!');	
-});
-
-// route middleware to validate :name
-router.param('name', function(req, res, next, name) {
-	// do validation on name here
-	// blah blah validation
-	// log something so we know its working
-	console.log('doing name validations on ' + name);
-
-	// once validation is done save the new item in the req
-	req.name = name;
-	// go to the next thing
-	next();	
-});
-
-// route with parameters (http://localhost:8080/hello/:name)
-router.get('/hello/:name', function(req, res) {
-	res.send('hello ' + req.name + '!');
-});
-
-// apply the routes to our application
-app.use('/', router);
-
-// login routes
-app.route('/login')
-
-	// show the form (GET http://localhost:8080/login)
-	.get(function(req, res) {
-		res.send('this is the login form');
-	})
-
-	// process the form (POST http://localhost:8080/login)
-	.post(function(req, res) {
-		console.log('processing');
-		res.send('processing the login form!');
-	});
-
-//upload file
-app.route("/upload")
+/* ========================================================== 
+Create a Route (/upload) to handle the Form submission 
+(handle POST requests to /upload)
+Express v4  Route definition
+============================================================ */
+app.route('/upload')
     .post(function (req, res, next) {
 
         var fstream;
         req.pipe(req.busboy);
-        req.busboy.on("file", (fieldname, file, filename) {
+        req.busboy.on('file', function (fieldname, file, filename) {
             console.log("Uploading: " + filename);
 
             //Path where image will be uploaded
-            fstream = fs.createWriteStream(__dirname + "/img/" + filename);
+            fstream = fs.createWriteStream(__dirname + '/img/' + filename);
             file.pipe(fstream);
-            fstream.on("close", function () {    
+            fstream.on('close', function () {    
                 console.log("Upload Finished of " + filename);              
-                res.redirect("back");           //where to go next
+                res.redirect('back');           //where to go next
             });
         });
     });
+
+var server = app.listen(3030, function() {
+    console.log('Listening on port %d', server.address().port);
+});
+INDEX.HTML
+
+<!DOCTYPE html>
+<html lang="en" ng-app="APP">
+<head>
+    <meta charset="UTF-8">
+    <title>angular file upload</title>
+</head>
+
+<body>
+        <form method='post' action='upload' enctype="multipart/form-data">
+        <input type='file' name='fileUploaded'>
+        <input type='submit'>
+ </body>
+</html>
+The following will work with formidable SERVER.JS
+
+var express = require('express');   //Express Web Server 
+var bodyParser = require('body-parser'); //connects bodyParsing middleware
+var formidable = require('formidable');
+var path = require('path');     //used for file path
+var fs =require('fs-extra');    //File System-needed for renaming file etc
+
+var app = express();
+app.use(express.static(path.join(__dirname, 'public')));
+
+/* ========================================================== 
+ bodyParser() required to allow Express to see the uploaded files
+============================================================ */
+
+//upload file
+app.use(bodyParser({defer: true}));
+ app.route('/upload')
+ .post(function (req, res, next) {
+
+  var form = new formidable.IncomingForm();
+    //Formidable uploads to operating systems tmp dir by default
+    form.uploadDir = "./img";       //set upload directory
+    form.keepExtensions = true;     //keep file extension
+
+    form.parse(req, function(err, fields, files) {
+        res.writeHead(200, {'content-type': 'text/plain'});
+        res.write('received upload:\n\n');
+        console.log("form.bytesReceived");
+        //TESTING
+        console.log("file size: "+JSON.stringify(files.fileUploaded.size));
+        console.log("file path: "+JSON.stringify(files.fileUploaded.path));
+        console.log("file name: "+JSON.stringify(files.fileUploaded.name));
+        console.log("file type: "+JSON.stringify(files.fileUploaded.type));
+        console.log("astModifiedDate: "+JSON.stringify(files.fileUploaded.lastModifiedDate));
+
+        //Formidable changes the name of the uploaded file
+        //Rename the file to its original name
+        fs.rename(files.fileUploaded.path, './img/'+files.fileUploaded.name, function(err) {
+        if (err)
+            throw err;
+          console.log('renamed complete');  
+        });
+          res.end();
+    });
+});
 
 // START THE SERVER
 // ==============================================
