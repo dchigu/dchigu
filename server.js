@@ -41,6 +41,5 @@ app.use(bodyParser({defer: true}));
     });
 });
 
-var server = app.listen(3030, function() {
-console.log('Listening on port %d', server.address().port);
-});
+app.listen(port);
+console.log("Magic happens on port " + port);
