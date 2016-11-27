@@ -81,7 +81,7 @@ app.route("/upload")
 
         var fstream;
         req.pipe(req.busboy);
-        req.busboy.on("file", /* @callback */ function (fieldname, file, filename) {
+        req.busboy.on("file", (fieldname, file, filename) {
             console.log("Uploading: " + filename);
 
             //Path where image will be uploaded
