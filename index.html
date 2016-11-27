@@ -1,3 +1,6 @@
+<html>
+  <body>
+   
 <h1>Finance Details</h1>
 
 <select>
@@ -8,6 +11,7 @@
   <option value="Movado">Movado</option>
 </select>
 <p>Prices & Description of Watches</p>
+    <form action="go" method="post" enctype="multipart/form-data">
 <input type="file" id="myFile" name="uploads[]" multiple="multiple"><br>
 <button onclick="myFunction()">Submit</button>
 <p id="demo"></p>
@@ -16,3 +20,6 @@ function myFunction() {
     document.getElementById("demo").innerHTML = "File Uploaded! Deal Signed";
 }
 </script>
+    </form>
+  </body>
+</html>
