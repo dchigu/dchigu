@@ -1,5 +1,0 @@
----
-applications:
-- name: dchigu-dchigu-1517
-  host: dchigu-dchigu-1517
-  memory: 128M
